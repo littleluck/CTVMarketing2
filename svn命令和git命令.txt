@@ -1,0 +1,149 @@
+在linux下安装svn服务器的基本命令：
+1.解压subversion-1.6.1.tar.gz （subversion 源文件）、subversion-deps-1.6.1.tar.gz （subversion依赖文件）
+解压命令：
+ （1）tar xfvz subversion-1.6.1.tar.gz 
+ （2）tar xfvz subversion-deps-1.6.1.tar.gz
+
+2.建立版本库目录
+ 命令：mkdir –p /opt/svndata/repos
+
+3.建立svn版本库
+ svnadmin create /opt/svndata/repos
+
+4.修改版本库配置文件
+ vi /opt/svndata/repos/conf/svnserve.conf
+ vi /opt/svndata/repos/conf/passwd
+ vi /opt/svndata/repos/conf/authz
+
+5.启动svn服务
+  执行svnserve -d -r /opt/svndata/repos/ 启动服务, 以deamon方式运行。
+  本系统采用svnserve方式, 这是小团队项目的推荐方法. 这种方法维护最少, 配置最简单.
+  指令简介：此指令用于启动svn服务，-d指明以守护模式运行，svn自动在3690端口监听。3690是默认端口，可以使用“--listen-port=  ”或者“--listen-host=”来指定其它端口。
+
+6.检查svn服务器是否正常启动：
+  ps -ef|grep svnserve
+  或
+  ps -ef|grep svn
+  如果显示如下，即为启动成功：
+Root　 6941　　 1　0 15:07 ?　　00:00:00 svnserve -d ——listen-port 9999 -r /svn
+
+7.关闭svn服务器
+   killall svnserve
+
+8.linux下查看端口占用情况
+  netstat -apn|grep 3690
+
+
+
+将本地项目上传到github仓库：
+1.进入项目文件夹通过命令 git init 把这个目录变成git可以管理的仓库:
+ git init
+
+2.把文件添加到版本库中，使用命令 git add .添加到暂存区里面去，不要忘记后面的小数点“.”，意为添加文件夹下的  所有文件:
+ git add .
+
+3.用命令 git commit告诉Git，把文件提交到仓库,引号内为提交说明:
+ git commit -m 'first commit'
+
+4.关联到github仓库：
+ git remote add origin https://github.com/littleluck/SSAInfluenceMax (你的远程库地址)
+
+5.获取远程库与本地同步合并（如果远程库不为空必须做这一步，否则后面的提交会失败）:
+ git pull --rebase origin master
+
+6.把本地库的内容推送到远程，使用 git push命令，实际上是把当前分支master推送到远程。执行此命令后会要求输入用  户名、密码，验证通过后即开始上传:
+ git push -u origin master (这里不需要-u应该也能行，-u是啥意思有待考证)
+
+***使用Git Gui图形界面管理提交代码很方便。
+
+
+对某个项目进行版本控制：
+1.在合适的位置点击右键，选择GitBash Here
+2.关闭证书验证（可选）
+ git config --global http.sslVerify false
+3.使用克隆命令将远程仓库的代码复制一份到本地，注意此处应该用https访问
+ git clone https://***.***.***.***/salestool.git
+ (输入用户名和密码之后，将开始下载远程仓库，这里仅仅下的是主分支-master) 
+4.进入到项目，即从命令行进入已经下载下来的git仓库，saletool/表示本项目的目录名   
+ cd salestool/
+5.查看仓库的分支情况（可选）
+ git branch –a
+
+ 例如，显示如下：
+ * master
+   remotes/origin/HEAD -> origin/master      HEAD-远程仓库的当前分支是主分支
+   remotes/origin/dev                        dev分支(所有操作都会合并到该分支)
+   remotes/origin/master                 master分支-主分支
+
+6.创建本地仓库的dev分支
+ git checkout -b dev
+7.将远程仓库的dev分支代码复制到本地dev分支
+ git pull origin dev
+8.查看本地git仓库状态（可选）
+ git status
+9.再次查看分支状态（可选）
+ git branch –a
+ 上面显示的是本地分支，绿色字体和”*”表示的是当前所在的分支，
+ 下面红色部分显示的是远程仓库的分支。
+10.创建自己的本地分支，并切换到该分支，自己在此分支上写代码
+ git checkout -b ye（分支名，自己取）
+11.开始对项目进行编程，将所有修改文件提交到本地暂存区（staged），等待提交
+ git add .        注意：确保此时在自己的分支上进行操作，eg：ye(我自己的名字)
+ git commit –m “提交说明”     将本地暂存区的代码提交到自己的分支上
+
+12.切换到本地dev分支，并将远程仓库的dev分支的最新代码拉下来
+ git checkout dev
+ git pull origin dev
+ (此时，本地仓库的dev分支已经确保是最新的了)
+13.切换到自己的分支，将本地dev分支合并到自己的分支ye上
+ git checkout ye
+ git merge dev        将本地dev分支合并到自己的分支上
+注意：此时已经将dev分支合并到本地的自己的分支上了，有时候可能需要解决代码冲突问题，解决完毕后再进行下面的操作。
+如果有冲突，则需要再次进行add,commit操作。
+
+14.解决冲突完毕后，切换到本地dev分支，将合并完毕的自己的分支合并到本地dev
+ git checkout dev
+ git merge ye
+ 接下来的操作，就是将本地dev分支推到远程仓库的dev分支上了... ...
+15.推送到远程服务器
+ git push origin dev
+
+
+
+
+
+小笔记：
+********
+重新安装mysql服务：mysqld.exe -install
+win+R打开运行窗口，在运行窗口中输入regedit打开注册表
+win+E打开计算机
+
+
+
+
+1.次模优化：
+https://las.inf.ethz.ch/files/krause12survey.pdf （*）
+2.社交网络影响力传播
+https://www.cs.cornell.edu/home/kleinber/kdd03-inf.pdf （*）
+https://arxiv.org/abs/1404.0900 （***）
+3.近似算法：
+http://www.cs.cmu.edu/afs/cs/academic/class/15854-f05/www/scribe/lec04.pdf （*）
+http://www.cc.gatech.edu/fac/Vijay.Vazirani/book.pdf （**）
+4.差分隐私：
+https://www.cis.upenn.edu/~aaroth/Papers/privacybook.pdf （*） 
+https://arxiv.org/abs/0903.4510 （**）
+https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/mdviadp.pdf （**）
+5.Multi-armed-bandit:
+https://homes.di.unimi.it/~cesabian/Pubblicazioni/ml-02.pdf （*）
+https://cseweb.ucsd.edu/~yfreund/papers/bandits.pdf （**）
+https://arxiv.org/abs/1204.5721 （**）
+6.博弈论与机制设计：
+http://www.cis.upenn.edu/~mkearns/teaching/SponsoredSearch/ArcherTardos.pdf （*）
+http://theory.stanford.edu/~tim/f13/f13.html （**）
+http://www.cambridge.org/us/academic/subjects/computer-science/algorithmics-complexity-computer-algebra-and-computational-g/algorithmic-game-theory?format=HB （**）
+7.众包计算：
+https://optimization.asu.edu/papers/XUE-CNF-2012-MOBICOM-MPSensing.pdf （**）
+8. 随机算法：
+https://book.douban.com/subject/2056370 （*）
+9. 社交网络隐私保护：
+http://dimacs.rutgers.edu/~graham/pubs/papers/staircase.pdf （**）
